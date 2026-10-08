@@ -7,7 +7,7 @@ const expenseList = document.getElementById("expenses");
 const totalExpensesElement = document.getElementById("total-expenses");
 const balanceElement = document.getElementById("balance");
 
-let expenses = [];
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 
 addExpenseButton.addEventListener("click", function () {
     const name = expenseName.value.trim();
@@ -68,11 +68,17 @@ function deleteExpense(id) {
     updateSummary();
 }
 
-function updateSummary() {
+ function updateSummary() {
     const total = expenses.reduce(function (sum, expense) {
         return sum + expense.amount;
     }, 0);
 
     totalExpensesElement.textContent = `₹${total}`;
     balanceElement.textContent = `₹${total}`;
+
+    localStorage.setItem("expenses", JSON.stringify(expenses));
 }
+
+
+displayExpenses();
+updateSummary();
