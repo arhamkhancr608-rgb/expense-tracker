@@ -1,3 +1,5 @@
+alert("JavaScript is working!");
+
 const expenseName = document.getElementById("expense-name");
 const expenseAmount = document.getElementById("expense-amount");
 const expenseCategory = document.getElementById("expense-category");
