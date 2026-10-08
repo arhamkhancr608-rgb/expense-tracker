@@ -4,31 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Expense Tracker</title>
+
     <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
     <div class="container">
+
         <h1>Expense Tracker</h1>
         <p class="subtitle">Track your spending with ease.</p>
 
         <div class="summary">
-            <div class="card">
-                <h3>Total Balance</h3>
-                <p id="balance">₹0</p>
-            </div>
 
             <div class="card">
                 <h3>Total Expenses</h3>
                 <p id="total-expenses">₹0</p>
             </div>
+
+            <div class="card">
+                <h3>Transactions</h3>
+                <p id="transaction-count">0</p>
+            </div>
+
         </div>
 
         <div class="expense-form">
+
             <h2>Add Expense</h2>
 
-            <input type="text" id="expense-name" placeholder="Expense name">
-            <input type="number" id="expense-amount" placeholder="Amount">
+            <input
+                type="text"
+                id="expense-name"
+                placeholder="Expense name"
+            >
+
+            <input
+                type="number"
+                id="expense-amount"
+                placeholder="Amount"
+            >
 
             <select id="expense-category">
                 <option value="Food">Food</option>
@@ -39,20 +56,30 @@
             </select>
 
             <button id="add-expense">Add Expense</button>
+
         </div>
-        
-  <div class="expense-list">
-    <h2>Spending by Category</h2>
-    <canvas id="expense-chart"></canvas>
-</div>
-        
+
         <div class="expense-list">
+
             <h2>Recent Expenses</h2>
+
             <ul id="expenses"></ul>
+
         </div>
+
+        <div class="chart-container">
+
+            <h2>Spending by Category</h2>
+
+            <div class="chart-wrapper">
+                <canvas id="expense-chart"></canvas>
+            </div>
+
+        </div>
+
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="script.js"></script>
+
 </body>
 </html>
