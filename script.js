@@ -4,123 +4,66 @@ const expenseCategory = document.getElementById("expense-category");
 const addExpenseButton = document.getElementById("add-expense");
 
 const expenseList = document.getElementById("expenses");
+const totalExpensesElement = document.getElementById("total-expenses");
+const transactionCountElement = document.getElementById("transaction-count");
 
-const totalExpensesElement =
-    document.getElementById("total-expenses");
-
-const transactionCountElement =
-    document.getElementById("transaction-count");
-
-let expenses =
-    JSON.parse(localStorage.getItem("expenses")) || [];
-
+let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
 let expenseChart = null;
-
 
 addExpenseButton.addEventListener("click", addExpense);
 
-
 function addExpense() {
-
     const name = expenseName.value.trim();
-
-    const amount =
-        Number(expenseAmount.value);
-
-    const category =
-        expenseCategory.value;
-
+    const amount = Number(expenseAmount.value);
+    const category = expenseCategory.value;
 
     if (name === "" || amount <= 0) {
-
         alert("Please enter a valid expense.");
-
         return;
     }
 
-
     const expense = {
-
         id: Date.now(),
-
         name: name,
-
         amount: amount,
-
         category: category
-
     };
 
-
     expenses.push(expense);
-
 
     saveExpenses();
 
     expenseName.value = "";
-
     expenseAmount.value = "";
 
-
     renderExpenses();
-
     updateSummary();
-
     updateChart();
-
 }
-
 
 function deleteExpense(id) {
-
-    expenses =
-        expenses.filter(
-            expense => expense.id !== id
-        );
-
+    expenses = expenses.filter(expense => expense.id !== id);
 
     saveExpenses();
-
     renderExpenses();
-
     updateSummary();
-
     updateChart();
-
 }
 
-
 function renderExpenses() {
-
     expenseList.innerHTML = "";
 
-
     expenses.forEach(expense => {
-
-        const li =
-            document.createElement("li");
-
+        const li = document.createElement("li");
 
         li.innerHTML = `
-
             <div class="expense-info">
-
-                <strong>
-                    ${expense.name}
-                </strong>
-
-                <small>
-                    ${expense.category}
-                </small>
-
+                <strong>${expense.name}</strong>
+                <small>${expense.category}</small>
             </div>
 
-
             <div>
-
-                <strong>
-                    ₹${expense.amount}
-                </strong>
+                <strong>₹${expense.amount}</strong>
 
                 <button
                     class="delete-btn"
@@ -128,131 +71,72 @@ function renderExpenses() {
                 >
                     Delete
                 </button>
-
             </div>
-
         `;
 
-
         expenseList.appendChild(li);
-
     });
-
 }
-
 
 function updateSummary() {
-
-    const total =
-        expenses.reduce(
-            (sum, expense) =>
-                sum + expense.amount,
-            0
-        );
-
-
-    totalExpensesElement.textContent =
-        `₹${total}`;
-
-
-    transactionCountElement.textContent =
-        expenses.length;
-
-}
-
-
-function saveExpenses() {
-
-    localStorage.setItem(
-        "expenses",
-        JSON.stringify(expenses)
+    const total = expenses.reduce(
+        (sum, expense) => sum + expense.amount,
+        0
     );
 
+    totalExpensesElement.textContent = `₹${total}`;
+    transactionCountElement.textContent = expenses.length;
 }
 
+function saveExpenses() {
+    localStorage.setItem("expenses", JSON.stringify(expenses));
+}
 
 function updateChart() {
-
     const categories = {};
 
-
     expenses.forEach(expense => {
-
         if (!categories[expense.category]) {
-
             categories[expense.category] = 0;
-
         }
 
-
-        categories[expense.category] +=
-            expense.amount;
-
+        categories[expense.category] += expense.amount;
     });
 
-
-    const canvas =
-        document.getElementById("expense-chart");
-
+    const canvas = document.getElementById("expense-chart");
 
     if (expenseChart) {
-
         expenseChart.destroy();
-
     }
-
 
     if (expenses.length === 0) {
-
         return;
-
     }
 
+    expenseChart = new Chart(canvas, {
+        type: "doughnut",
 
-    expenseChart =
-        new Chart(canvas, {
+        data: {
+            labels: Object.keys(categories),
 
-            type: "doughnut",
+            datasets: [{
+                data: Object.values(categories)
+            }]
+        },
 
-            data: {
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
 
-                labels:
-                    Object.keys(categories),
-
-                datasets: [{
-
-                    data:
-                        Object.values(categories)
-
-                }]
-
-            },
-
-            options: {
-
-                responsive: true,
-
-                maintainAspectRatio: false,
-
-                plugins: {
-
-                    legend: {
-
-                        position: "bottom"
-
-                    }
-
+            plugins: {
+                legend: {
+                    position: "bottom"
                 }
-
             }
-
-        });
-
+        }
+    });
 }
 
-
 renderExpenses();
-
 updateSummary();
-
 updateChart();
