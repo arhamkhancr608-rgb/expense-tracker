@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <p class="subtitle">Track your spending with ease.</p>
+
+        <div class="summary">
+            <div class="card">
+                <h3>Total Balance</h3>
+                <p id="balance">₹0</p>
+            </div>
+
+            <div class="card">
+                <h3>Total Expenses</h3>
+                <p id="total-expenses">₹0</p>
+            </div>
+        </div>
+
+        <div class="expense-form">
+            <h2>Add Expense</h2>
+
+            <input type="text" id="expense-name" placeholder="Expense name">
+            <input type="number" id="expense-amount" placeholder="Amount">
+
+            <select id="expense-category">
+                <option value="Food">Food</option>
+                <option value="Travel">Travel</option>
+                <option value="Shopping">Shopping</option>
+                <option value="Bills">Bills</option>
+                <option value="Other">Other</option>
+            </select>
+
+            <button id="add-expense">Add Expense</button>
+        </div>
+
+        <div class="expense-list">
+            <h2>Recent Expenses</h2>
+            <ul id="expenses"></ul>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
