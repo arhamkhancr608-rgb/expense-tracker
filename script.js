@@ -2,118 +2,257 @@ const expenseName = document.getElementById("expense-name");
 const expenseAmount = document.getElementById("expense-amount");
 const expenseCategory = document.getElementById("expense-category");
 const addExpenseButton = document.getElementById("add-expense");
+
 const expenseList = document.getElementById("expenses");
 
-const totalExpensesElement = document.getElementById("total-expenses");
-const balanceElement = document.getElementById("balance");
+const totalExpensesElement =
+    document.getElementById("total-expenses");
 
-let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
-let expenseChart;
+const transactionCountElement =
+    document.getElementById("transaction-count");
 
-addExpenseButton.addEventListener("click", function () {
+let expenses =
+    JSON.parse(localStorage.getItem("expenses")) || [];
+
+let expenseChart = null;
+
+
+addExpenseButton.addEventListener("click", addExpense);
+
+
+function addExpense() {
+
     const name = expenseName.value.trim();
-    const amount = Number(expenseAmount.value);
-    const category = expenseCategory.value;
+
+    const amount =
+        Number(expenseAmount.value);
+
+    const category =
+        expenseCategory.value;
+
 
     if (name === "" || amount <= 0) {
+
         alert("Please enter a valid expense.");
+
         return;
     }
 
+
     const expense = {
+
         id: Date.now(),
+
         name: name,
+
         amount: amount,
+
         category: category
+
     };
+
 
     expenses.push(expense);
 
+
+    saveExpenses();
+
     expenseName.value = "";
+
     expenseAmount.value = "";
 
-    saveExpenses();
-    displayExpenses();
+
+    renderExpenses();
+
     updateSummary();
+
     updateChart();
-});
 
-function displayExpenses() {
-    expenseList.innerHTML = "";
-
-    expenses.forEach(function (expense) {
-        const li = document.createElement("li");
-
-        li.innerHTML = `
-            <div class="expense-info">
-                <strong>${expense.name}</strong>
-                <small>${expense.category}</small>
-            </div>
-
-            <div>
-                <strong>₹${expense.amount}</strong>
-                <button class="delete-btn" onclick="deleteExpense(${expense.id})">
-                    Delete
-                </button>
-            </div>
-        `;
-
-        expenseList.appendChild(li);
-    });
 }
+
 
 function deleteExpense(id) {
-    expenses = expenses.filter(function (expense) {
-        return expense.id !== id;
-    });
+
+    expenses =
+        expenses.filter(
+            expense => expense.id !== id
+        );
+
 
     saveExpenses();
-    displayExpenses();
+
+    renderExpenses();
+
     updateSummary();
+
     updateChart();
+
 }
+
+
+function renderExpenses() {
+
+    expenseList.innerHTML = "";
+
+
+    expenses.forEach(expense => {
+
+        const li =
+            document.createElement("li");
+
+
+        li.innerHTML = `
+
+            <div class="expense-info">
+
+                <strong>
+                    ${expense.name}
+                </strong>
+
+                <small>
+                    ${expense.category}
+                </small>
+
+            </div>
+
+
+            <div>
+
+                <strong>
+                    ₹${expense.amount}
+                </strong>
+
+                <button
+                    class="delete-btn"
+                    onclick="deleteExpense(${expense.id})"
+                >
+                    Delete
+                </button>
+
+            </div>
+
+        `;
+
+
+        expenseList.appendChild(li);
+
+    });
+
+}
+
 
 function updateSummary() {
-    const total = expenses.reduce(function (sum, expense) {
-        return sum + expense.amount;
-    }, 0);
 
-    totalExpensesElement.textContent = `₹${total}`;
-    balanceElement.textContent = `₹${total}`;
+    const total =
+        expenses.reduce(
+            (sum, expense) =>
+                sum + expense.amount,
+            0
+        );
+
+
+    totalExpensesElement.textContent =
+        `₹${total}`;
+
+
+    transactionCountElement.textContent =
+        expenses.length;
+
 }
+
 
 function saveExpenses() {
-    localStorage.setItem("expenses", JSON.stringify(expenses));
+
+    localStorage.setItem(
+        "expenses",
+        JSON.stringify(expenses)
+    );
+
 }
+
 
 function updateChart() {
+
     const categories = {};
 
-    expenses.forEach(function (expense) {
-        categories[expense.category] =
-            (categories[expense.category] || 0) + expense.amount;
+
+    expenses.forEach(expense => {
+
+        if (!categories[expense.category]) {
+
+            categories[expense.category] = 0;
+
+        }
+
+
+        categories[expense.category] +=
+            expense.amount;
+
     });
 
-    const ctx = document.getElementById("expense-chart");
+
+    const canvas =
+        document.getElementById("expense-chart");
+
 
     if (expenseChart) {
+
         expenseChart.destroy();
+
     }
 
-    expenseChart = new Chart(ctx, {
-        type: "doughnut",
-        data: {
-            labels: Object.keys(categories),
-            datasets: [{
-                data: Object.values(categories)
-            }]
-        },
-        options: {
-            responsive: true
-        }
-    });
+
+    if (expenses.length === 0) {
+
+        return;
+
+    }
+
+
+    expenseChart =
+        new Chart(canvas, {
+
+            type: "doughnut",
+
+            data: {
+
+                labels:
+                    Object.keys(categories),
+
+                datasets: [{
+
+                    data:
+                        Object.values(categories)
+
+                }]
+
+            },
+
+            options: {
+
+                responsive: true,
+
+                maintainAspectRatio: false,
+
+                plugins: {
+
+                    legend: {
+
+                        position: "bottom"
+
+                    }
+
+                }
+
+            }
+
+        });
+
 }
 
-displayExpenses();
+
+renderExpenses();
+
 updateSummary();
+
 updateChart();
